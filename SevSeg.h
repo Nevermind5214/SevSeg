@@ -40,7 +40,7 @@ public:
   void begin(uint8_t hardwareConfig, uint8_t numDigitsIn, const uint8_t digitPinsIn[],
           const uint8_t segmentPinsIn[], bool resOnSegmentsIn=0,
           bool updateWithDelaysIn=0, bool leadingZerosIn=0,
-		  bool disableDecPoint=0);
+		  bool disableDecPoint=0, bool enableCenterDoubleDots=0, uint8_t dotsDigitNum=0, uint8_t dotsPin=0);
   void setBrightness(int16_t brightnessIn); // A number from 0..100
 
   void setNumber(int32_t numToShow, int8_t decPlaces=-1, bool hex=0);
@@ -51,6 +51,10 @@ public:
   void setSegmentsDigit(const uint8_t digitNum, const uint8_t segs);
   void setChars(const char str[]);
   void blank(void);
+
+  void toggleCenterDoubleDots(void);
+  bool getCenterDoubleDots(void) { return centerDoubleDotStatus; };
+  void setCenterDoubleDots(bool dots);
 
   uint8_t getNumDigits() { return numDigits; }
 
@@ -64,11 +68,13 @@ private:
   void digitOff(uint8_t digitNum);
 
   uint8_t digitOnVal,digitOffVal,segmentOnVal,segmentOffVal;
-  bool resOnSegments, updateWithDelays, leadingZeros;
+  bool resOnSegments, updateWithDelays, leadingZeros, enableCenterDoubleDots, centerDoubleDotStatus;
   uint8_t digitPins[MAXNUMDIGITS];
   uint8_t segmentPins[8];
   uint8_t numDigits;
   uint8_t numSegments;
+  uint8_t dotsDigitNum;
+  uint8_t dotsPin;
   uint8_t prevUpdateIdx; // The previously updated segment or digit
   uint8_t digitCodes[MAXNUMDIGITS]; // The active setting of each segment of each digit
   uint32_t prevUpdateTime; // The time (millis()) when the display was last updated

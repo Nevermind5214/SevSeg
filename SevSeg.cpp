@@ -104,6 +104,10 @@ SevSeg::SevSeg() {
   prevUpdateTime = 0;
   resOnSegments = 0;
   updateWithDelays = 0;
+  enableCenterDoubleDots = false;
+  dotsDigitNum = 0;
+  dotsPin = 0;
+  centerDoubleDotStatus = false;
 }
 
 
@@ -119,7 +123,11 @@ SevSeg::SevSeg() {
 // which case there are only 7 segments.
 void SevSeg::begin(uint8_t hardwareConfig, uint8_t numDigitsIn, const uint8_t digitPinsIn[],
                    const uint8_t segmentPinsIn[], bool resOnSegmentsIn,
-                   bool updateWithDelaysIn, bool leadingZerosIn, bool disableDecPoint) {
+                   bool updateWithDelaysIn, bool leadingZerosIn, bool disableDecPoint,  bool enableCenterDoubleDotsIn, uint8_t dotsDigitNumIn, uint8_t dotsPinIn) {
+  
+  dotsDigitNum = dotsDigitNumIn;
+  dotsPin = dotsPinIn;
+  enableCenterDoubleDots = enableCenterDoubleDotsIn;
 
   resOnSegments = resOnSegmentsIn;
   updateWithDelays = updateWithDelaysIn;
@@ -185,6 +193,9 @@ void SevSeg::begin(uint8_t hardwareConfig, uint8_t numDigitsIn, const uint8_t di
     pinMode(segmentPins[segmentNum], OUTPUT);
     digitalWrite(segmentPins[segmentNum], segmentOffVal);
   }
+
+  pinMode(dotsPin, OUTPUT);
+  digitalWrite(dotsPin, segmentOffVal);
 
   blank(); // Initialise the display
 }
@@ -346,6 +357,13 @@ void SevSeg::digitOn(uint8_t digitNum) {
       digitalWrite(segmentPins[segmentNum], segmentOnVal);
     }
   }
+  if (digitNum == dotsDigitNum) {
+    if (enableCenterDoubleDots) { 
+      if (centerDoubleDotStatus) {
+        digitalWrite(dotsPin, segmentOnVal);
+      }
+    }
+  }
 }
 
 // digitOff
@@ -354,6 +372,11 @@ void SevSeg::digitOn(uint8_t digitNum) {
 void SevSeg::digitOff(uint8_t digitNum) {
   for (uint8_t segmentNum = 0 ; segmentNum < numSegments ; segmentNum++) {
     digitalWrite(segmentPins[segmentNum], segmentOffVal);
+  }
+  if (digitNum == dotsDigitNum) {
+    if (enableCenterDoubleDots) {
+      digitalWrite(dotsPin, segmentOffVal);
+    }
   }
   digitalWrite(digitPins[digitNum], digitOffVal);
 }
@@ -503,6 +526,19 @@ void SevSeg::setChars(const char str[]) {
       strIdx++;
     }
   }
+}
+
+
+// toggleCenterDoubleDots
+/******************************************************************************/
+void SevSeg::toggleCenterDoubleDots(void) {
+  if(enableCenterDoubleDots) centerDoubleDotStatus = !centerDoubleDotStatus;
+}
+
+// setCenterDoubleDots
+/******************************************************************************/
+void SevSeg::setCenterDoubleDots(bool dots) {
+  if(enableCenterDoubleDots) centerDoubleDotStatus = dots;
 }
 
 // blank
