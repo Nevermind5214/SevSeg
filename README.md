@@ -10,6 +10,7 @@ Supports:
  - decimal place
  - input numbers as int or float
  - alphanumeric characters (as accurately as possible)
+ - center double dots ":"
 
 [Download it from GitHub][1].
 
@@ -180,6 +181,23 @@ The brightness can be adjusted using a value between -200 and 200. 0 to 100 is t
 Numbers greater than 100 and less than -100 may cause noticeable flickering.
 Note that a 0 does not correspond to no brightness - nor does -200. If your display has noticeable flickering, modifying the brightness towards 0 may correct it.
 Results will vary for each implementation. The brightness seen depends on the display characteristics, the arduino model driving it, the resistors used, and the amount of time spent doing other things in the program.
+
+### Center double dots
+To use the ":" in the middle(if your display has them), you need to enable it first.
+
+```c++
+bool enableCenterDoubleDots = true; // Enable the dots
+int dotsDigitNum = 1; // You need to specify to which digit is the extra dots segment connected to, in this case, it is the 2nd one.
+int dotsPin = 13; // Pin of the extra segment.
+
+sevseg.begin(COMMON_ANODE, 4, digitPins, segmentPins, true, false, false, false, enableCenterDoubleDots, dotsDigitNum, dotsPin);
+```
+```c++
+toggleCenterDoubleDots(); // toggles the dots on/off
+bool status = getCenterDoubleDots(); // current status of the dots
+setCenterDoubleDots(true); // ":" on
+setCenterDoubleDots(false); // ":" off
+```
 
 ## License
 
